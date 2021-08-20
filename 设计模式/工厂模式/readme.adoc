@@ -1,0 +1,51 @@
+
+= 工厂模式
+
+[source,java]
+----
+public interface Animal{
+
+    String say();
+
+}
+----
+
+[source,java]
+----
+public class Dog implements Animal{
+
+    @Override
+    public String say() {
+        return "汪";
+    }
+
+}
+----
+
+[source,java]
+----
+public class Cat implements Animal{
+
+    @Override
+    public String say() {
+        return "喵";
+    }
+
+}
+----
+
+[source,java]
+----
+public class AnimalFactory {
+
+    public Animal say(String type) {
+        return switch (type) {
+            case "dog" -> Dog::new;
+            case "cat" -> Cat::new;
+            default:
+                throw new IllegalArgumentException(type);
+        };
+    }
+
+}
+----
