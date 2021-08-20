@@ -1,0 +1,80 @@
+
+= 单例模式
+
+第一次使用都会阻塞，等待类加载，等待实例初始化
+
+== 饿汉式
+
+优点：
+
+. 不需要处理线程安全
+
+缺点：
+
+. 如果不使用，就会浪费内存
+
+[source,java]
+----
+public class TestClass {
+
+    private TestClass() {}
+
+    private static final TestClass OBJECT = new TestClass();
+
+}
+
+----
+
+== 懒汉式
+
+优点：
+
+. 需要手动处理线程安全
+. 如果不使用，不会浪费内存
+
+[source,java]
+----
+public class TestClass {
+
+    private TestClass() {}
+
+    private static TestClass OBJECT;
+
+    public TestClass newInstance() {
+        if(null == OBJECT){
+            synchronized(TestClass.class) {
+                if(null == OBJECT){
+                    OBJECT = new TestClass();
+                }
+            }
+        }
+      return OBJECT;
+    }
+}
+
+----
+
+== 懒汉式 - 内部类
+
+优点：
+
+. 不需要处理线程安全
+. 如果不使用，不会浪费内存
+
+[source,java]
+----
+public class TestClass {
+
+    private TestClass() {}
+
+    public TestClass newInstance() {
+        return InnerClass.OBJECT;
+    }
+
+    private static class InnerClass{
+        private static final TestClass OBJECT = new TestClass();
+    }
+
+}
+
+----

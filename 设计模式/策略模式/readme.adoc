@@ -1,0 +1,28 @@
+
+= 策略模式
+
+在策略模式（Strategy Pattern）中，一个类的行为或其算法可以在运行时更改。这种类型的设计模式属于行为型模式。
+
+[source,java]
+----
+public enum C {
+
+    dog() {
+        @Override
+        public String say() {
+            return "汪";
+        }
+    },
+
+    cat() {
+        @Override
+        public String say() {
+            return "喵";
+        }
+    }
+
+    ;
+
+    public abstract String say();
+}
+----
