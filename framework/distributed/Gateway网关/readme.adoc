@@ -1,0 +1,34 @@
+
+= gateway 网关
+
+一般情况下，网关都会提供请求转发、安全认证（身份/权限认证）、流量控制、负载均衡、容灾、日志、监控这些功能。
+
+实际上，网关主要做了一件事情：请求过滤 。
+
+== Netflix Zuul
+
+Zuul 是 Netflix 开发的一款提供动态路由、监控、弹性、安全的网关服务。
+
+Zuul 主要通过过滤器（类似于 AOP）来过滤请求，从而实现网关必备的各种功能。
+
+== Spring Cloud Gateway
+
+其诞生的目标是为了替代老牌网关 Zuul 。准确点来说，应该是 Zuul 1.x。SpringCloud Gateway 起步要比 Zuul 2.x 更早。
+
+为了提升网关的性能，SpringCloud Gateway 基于 Spring WebFlux 。Spring WebFlux 使用 Reactor 库来实现响应式编程模型，底层基于 Netty 实现异步 IO。
+
+== Kong
+
+基于 OpenResty 的高性能、云原生、可扩展的网关系统
+
+== APISIX
+
+APISIX 是一款基于 Nginx 和 etcd 的高性能、云原生、可扩展的网关系统。
+
+作为 NGINX 和 Kong 的替代项目，APISIX 目前已经是 Apache 顶级开源项目，并且是最快毕业的国产开源项目。国内目前已经有很多知名企业（比如金山、有赞、爱奇艺、腾讯、贝壳）使用 APISIX 处理核心的业务流量。
+
+根据官网介绍：“APISIX 已经生产可用，功能、性能、架构全面优于 Kong”。
+
+== Shenyu
+
+Shenyu 是一款基于 WebFlux 的可扩展、高性能、响应式网关，Apache 顶级开源项目。

@@ -1,0 +1,9 @@
+
+= Dubbo
+
+== Invoker
+
+Invoker 是 Dubbo 对远程调用的抽象。
+
+- 服务提供 Invoker
+- 服务消费 Invoker
