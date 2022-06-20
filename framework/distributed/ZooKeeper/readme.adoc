@@ -1,2 +1,86 @@
 
 = ZooKeeper
+
+一致性协议：ZAB（ZooKeeper Atomic Broadcast 原子广播）
+
+树形结构，类似于 ETCD，每个节点称为 ZNode（最多 1MB 数据）
+
+数据保存在内存
+
+CAP：CP
+
+== ZNode
+
+节点类型
+
+. 持久（PERSISTENT）节点
+
+    一旦创建就一直存在即使 ZooKeeper 集群宕机，直到将其删除。
+
+. 临时（EPHEMERAL）节点
+
+    临时节点的生命周期是与 客户端会话（session） 绑定的，会话消失则节点消失 。并且，临时节点只能做叶子节点 ，不能创建子节点。
+
+. 持久顺序（PERSISTENT_SEQUENTIAL）节点
+
+    除了具有持久（PERSISTENT）节点的特性之外， 子节点的名称还具有顺序性。比如 /node1/app0000000001 、/node1/app0000000002 。
+
+. 临时顺序（EPHEMERAL_SEQUENTIAL）节点
+
+    除了具备临时（EPHEMERAL）节点的特性之外，子节点的名称还具有顺序性。
+
+数据结构
+
+. stat
+
+    状态信息
+
+. data
+
+    节点存放的数据的具体内容
+
+== watch
+
+监听 ZNode 数据变化，只能触发一次
+
+== 节点类型
+
+. Leader
+
+    为客户端提供读和写的服务，负责投票的发起和决议，更新系统状态。
+
+. Follower
+
+    为客户端提供读服务，如果是写服务则转发给 Leader。参与选举过程中的投票。
+
+. Observer
+
+    为客户端提供读服务，如果是写服务则转发给 Leader。不参与选举过程中的投票，也不参与“过半写成功”策略。在不影响写性能的情况下提升集群的读性能。此角色于 ZooKeeper3.3 系列新增的角色。
+
+== zxid
+
+是一个64位的数字，它高32位是epoch用来标识leader关系是否改变。每次一个leader被选出来，都有一个新的epoch，低32位是递增计数。
+
+== 选举流程
+
+. 每个server启动以后都要询问其他server他要投票给谁
+. 对于其他server的询问，server每次根据自己的状态都恢复自己推荐的leader的id和上一次处理事务的zxid（第一次的时候每个server都会推荐自己）
+. 收到所有的server的回复后，计算出 zxid 最大的那个server，并将这个server的信息设置成下一次要投票的server。
+. 计算这个过程中票数最多的server为获胜者，如果获胜者的票数超过半数，则该server被选为leader。否则，继续这个过程，直到leader被选举出来。
+. leader就会等待server进行连接
+. follower连接leader，将最大的zxid发送给leader
+. leader根据follower的zxid确定同步点
+. 完成同步后通知follower已经成为uptodata状态
+. follower收到uptodata信息后，就可以重新接受client请求进行服务了
+
+== 过半机制（选举时）
+
+zookeeper集群中所有的操作都必须遵从过半机制，即必须保证一半以上的Server同意这个proposal（提议），这个提议才会成功。
+
+== 服务器为什么是奇数台
+
+leader选举算法采用了 `paxos` 协议
+
+paxos 核心思想：当多数server写成功，则任务数据写成功。如果有3个server则2个写成功即可，当有4个或5个server，则3个写成功即可。
+
+服务器数量一般为单数个：如果有3个server，最多允许有一个server挂掉，如果有4个server，则同样最多允许一个server挂掉，因此，我们可以看出，3台服务器和4台服务器的容灾能力是一样的，为了节省服务器资源，我们通常采用奇数数量，作为服务器部署数量。
