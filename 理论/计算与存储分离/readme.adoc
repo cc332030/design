@@ -1,0 +1,11 @@
+
+= 计算与存储分离
+
+比如：解析 SQL、分析索引的操作放一台服务器，数据的存储放另一台服务器 tableId-rowId: value
+
+== 例子
+
+. TiDB
+. Aurora
+. PolarDB
+. OceanBase
