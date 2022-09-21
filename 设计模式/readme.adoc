@@ -6,7 +6,7 @@
 
 . 构建者模式
 
-    builder, guava
+    builder, gson
 
 . 策略模式
 
